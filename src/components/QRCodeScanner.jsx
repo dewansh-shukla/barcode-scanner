@@ -4,20 +4,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 
 const QRCodeScanner = () => {
-  // State to track if we're on a mobile device
-  const [isMobile, setIsMobile] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [results, setResults] = useState([]);
   const [scannedCodes, setScannedCodes] = useState(new Set());
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
-  
-  // Check if we're on a mobile device on component mount
-  useEffect(() => {
-    // Simplified mobile detection - we'll use a simpler approach for camera
-    // No longer need complex mobile detection
-  }, []);
-  
+
   useEffect(() => {
     // Cleanup when component unmounts
     return () => {
@@ -29,92 +21,30 @@ const QRCodeScanner = () => {
     };
   }, []);
 
-  // Add a fallback method for mobile devices
-  const startScannerWithFallback = () => {
-    if (!scannerRef.current) return;
-
-    try {
-      const html5QrCode = new Html5Qrcode("qr-reader");
-      html5QrCodeRef.current = html5QrCode;
-
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-      };
-
-      // Try a more direct approach for mobile
-      // Some versions of mobile browsers have issues with getUserMedia precheck
-      html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        onScanSuccess,
-        onScanFailure
-      ).then(() => {
-        setScanning(true);
-      }).catch((err) => {
-        console.error("Direct start failed, trying getUserMedia first:", err);
-        // Fall back to the permission-first approach
-        startScannerWithPermissionCheck();
-      });
-    } catch (err) {
-      console.error("Error in fallback scanner:", err);
-      alert("Camera initialization failed. Please try again or check browser compatibility.");
-    }
-  };
-
-  // Original method with permission check first
-  const startScannerWithPermissionCheck = () => {
-    if (!scannerRef.current) return;
-
-    // First, explicitly request camera permissions
-    navigator.mediaDevices.getUserMedia({ 
-      video: { 
-        facingMode: "environment" // Explicitly request back camera
-      } 
-    })
-      .then((stream) => {
-        // Make sure to release the stream to avoid issues on mobile
-        stream.getTracks().forEach(track => track.stop());
-        
-        // Once we have permissions, start the scanner
-        const html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCodeRef.current = html5QrCode;
-
-        const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0
-        };
-
-        html5QrCode.start(
-          { facingMode: "environment" }, // Request back camera
-          config,
-          onScanSuccess,
-          onScanFailure
-        ).then(() => {
-          setScanning(true);
-        }).catch((err) => {
-          console.error("Error starting scanner after permission:", err);
-          // More descriptive error handling
-          const errorMessage = err.message || "Failed to access camera";
-          alert("Camera error: " + errorMessage);
-        });
-      })
-      .catch((err) => {
-        console.error("Camera permission error:", err);
-        // More descriptive mobile-friendly error
-        const errorMessage = err.name === "NotAllowedError" 
-          ? "Camera access denied. Please allow camera access in your browser settings and try again."
-          : "Camera error: " + (err.message || "Cannot access camera");
-        alert(errorMessage);
-      });
-  };
-
-  // Simplified method that calls our strategy
   const startScanner = () => {
-    // Try the direct method first, which has better compatibility with some mobile browsers
-    startScannerWithFallback();
+    if (!scannerRef.current) return;
+
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCodeRef.current = html5QrCode;
+
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+      aspectRatio: 1.0
+    };
+
+    // Simply use the library's start method with environment facing mode
+    html5QrCode.start(
+      { facingMode: "environment" },
+      config,
+      onScanSuccess,
+      onScanFailure
+    ).then(() => {
+      setScanning(true);
+    }).catch((err) => {
+      console.error("Error starting scanner:", err);
+      alert("Could not start camera. Please check camera permissions.");
+    });
   };
 
   const stopScanner = () => {
@@ -144,7 +74,7 @@ const QRCodeScanner = () => {
           id: Date.now(),
           text: decodedText,
           time: new Date().toLocaleTimeString(),
-          type: decodedResult.result.format ? decodedResult.result.format.toString() : 'Unknown'
+          type: decodedResult.result.format ? decodedResult.result.format.toString() : 'QR Code'
         }
       ]);
       
@@ -161,7 +91,7 @@ const QRCodeScanner = () => {
   };
 
   const onScanFailure = (error) => {
-    // Failure handling is optional, we're just logging errors here
+    // Failure handling is optional, we're just ignoring most errors
     // console.error(`QR scan error: ${error}`);
   };
 
