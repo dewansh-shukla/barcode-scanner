@@ -24,3 +24,97 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* QR Code Scanner Styles */
+.Qrcode-result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.Qrcode-result-table thead {
+  background-color: #f3f4f6;
+}
+
+.Qrcode-result-table td {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.Result-container {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.Result-header {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.Result-section {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.HowToUse {
+  padding: 10px;
+}
+
+.HowToUse h3 {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.HowToUse ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.HowToUse li {
+  margin-bottom: 5px;
+}
+
+/* HTML5 QR Scanner styles */
+#reader {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#reader video {
+  max-width: 100%;
+  height: auto !important;
+}
+
+#reader img[alt="Info icon"] {
+  display: none;
+}
+
+#reader button {
+  margin: 5px;
+  padding: 8px 16px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#reader button:hover {
+  background-color: #4338ca;
+}
+
+#reader select {
+  margin: 5px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
