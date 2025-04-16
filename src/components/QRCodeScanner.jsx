@@ -146,7 +146,6 @@ const QRCodeScanner = () => {
 
   return (
     <div className="qr-scanner-container">
-      <h2>QR Code Scanner</h2>
       
       <div id="qr-reader" ref={scannerRef} style={{ 
         width: '100%', 
@@ -215,7 +214,7 @@ const QRCodeScanner = () => {
       <div className="results-container" style={{ marginTop: '30px' }}>
         <h3>Scan Results</h3>
         {results.length > 0 ? (
-          <div className="cards-container">
+          <div className="cards-container" style={{color: 'black'}}>
             {results.map((result, index) => (
               <div key={result.id} style={cardStyle}>
                 <div style={cardHeaderStyle}>

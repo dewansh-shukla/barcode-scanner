@@ -18,7 +18,6 @@ const QRScannerPage = () => {
       margin: '0 auto', 
       padding: '20px' 
     }}>
-      <h1>QR Code Scanner</h1>
       <QRCodeScannerNoSSR />
     </div>
   );
