@@ -221,7 +221,8 @@ const tableHeaderStyle = {
 const tableCellStyle = {
   padding: '12px',
   borderBottom: '1px solid #ddd',
-  verticalAlign: 'middle'
+  verticalAlign: 'middle',
+  color: 'black'
 };
 
 export default QRCodeScanner;
