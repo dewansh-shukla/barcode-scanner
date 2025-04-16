@@ -206,3 +206,31 @@ body {
 .break-all {
   word-break: break-all;
 }
+
+/* Camera controls visibility fix */
+#reader__dashboard_section_csr {
+  display: block !important;
+}
+
+#reader__camera_selection {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Fix camera region to ensure proper display */
+#reader__scan_region {
+  display: block !important;
+  min-height: 300px !important;
+  position: relative !important;
+}
+
+#reader__scan_region video {
+  max-width: 100% !important;
+  max-height: 300px !important;
+  object-fit: contain !important;
+}
+
+/* Force camera permission button to be visible */
+#reader__dashboard_section_csr button {
+  display: inline-block !important;
+}
