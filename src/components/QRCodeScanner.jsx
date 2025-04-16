@@ -57,6 +57,15 @@ const QRCodeScanner = () => {
     }
   };
 
+  const extractSerialNumber = (url) => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.searchParams.get('s') || 'No serial number found';
+    } catch (error) {
+      return 'Invalid URL';
+    }
+  };
+
   const onScanSuccess = (decodedText, decodedResult) => {
     // Check if this code has been scanned before using our scannedCodes Set
     if (!scannedCodes.has(decodedText)) {
@@ -67,12 +76,17 @@ const QRCodeScanner = () => {
         return newScannedCodes;
       });
       
-      // Add to our results table
+      // Extract serial number from URL if it matches the expected format
+      const serialNumber = decodedText.includes('zap.gift') ? 
+        extractSerialNumber(decodedText) : 'Not a zap.gift URL';
+      
+      // Add to our results
       setResults(prevResults => [
         ...prevResults,
         {
           id: Date.now(),
           text: decodedText,
+          serialNumber: serialNumber,
           time: new Date().toLocaleTimeString(),
           type: decodedResult.result.format ? decodedResult.result.format.toString() : 'QR Code'
         }
@@ -98,6 +112,36 @@ const QRCodeScanner = () => {
   const clearResults = () => {
     setResults([]);
     setScannedCodes(new Set());
+  };
+
+  const cardStyle = {
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    padding: '15px',
+    marginBottom: '15px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    backgroundColor: 'white'
+  };
+
+  const cardHeaderStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '10px',
+    padding: '5px 0',
+    borderBottom: '1px solid #eee'
+  };
+
+  const cardContentStyle = {
+    marginBottom: '10px',
+    wordBreak: 'break-word'
+  };
+
+  const serialNumberStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#3a86ff',
+    padding: '10px 0'
   };
 
   return (
@@ -171,34 +215,27 @@ const QRCodeScanner = () => {
       <div className="results-container" style={{ marginTop: '30px' }}>
         <h3>Scan Results</h3>
         {results.length > 0 ? (
-          <div className="table-responsive" style={{ overflowX: 'auto' }}>
-            <table className="results-table" style={{ 
-              width: '100%', 
-              borderCollapse: 'collapse',
-              border: '1px solid #ddd',
-              boxShadow: '0 2px 3px rgba(0,0,0,0.1)'
-            }}>
-              <thead>
-                <tr>
-                  <th style={{...tableHeaderStyle, width: '8%'}}>No.</th>
-                  <th style={{...tableHeaderStyle, width: '50%'}}>Content</th>
-                  <th style={{...tableHeaderStyle, width: '22%'}}>Type</th>
-                  <th style={{...tableHeaderStyle, width: '20%'}}>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((result, index) => (
-                  <tr key={result.id} style={{
-                    backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white'
-                  }}>
-                    <td style={tableCellStyle}>{index + 1}</td>
-                    <td style={{...tableCellStyle, wordBreak: 'break-all'}}>{result.text}</td>
-                    <td style={tableCellStyle}>{result.type || 'QR Code'}</td>
-                    <td style={tableCellStyle}>{result.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="cards-container">
+            {results.map((result, index) => (
+              <div key={result.id} style={cardStyle}>
+                <div style={cardHeaderStyle}>
+                  <strong>Scan #{index + 1}</strong>
+                  <span>{result.time}</span>
+                </div>
+                
+                <div style={serialNumberStyle}>
+                  Serial: {result.serialNumber}
+                </div>
+                
+                <div style={cardContentStyle}>
+                  <strong>Content:</strong> {result.text}
+                </div>
+                
+                <div>
+                  <strong>Type:</strong> {result.type || 'QR Code'}
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <p>No QR codes scanned yet</p>
@@ -206,23 +243,6 @@ const QRCodeScanner = () => {
       </div>
     </div>
   );
-};
-
-// Styles
-const tableHeaderStyle = {
-  backgroundColor: '#3a86ff',
-  color: 'white',
-  padding: '12px',
-  borderBottom: '1px solid #ddd',
-  textAlign: 'left',
-  fontWeight: 'bold'
-};
-
-const tableCellStyle = {
-  padding: '12px',
-  borderBottom: '1px solid #ddd',
-  verticalAlign: 'middle',
-  color: 'black'
 };
 
 export default QRCodeScanner;
